@@ -4,6 +4,7 @@
 extern crate rocket;
 
 use rocket_contrib::templates::Template;
+use rocket_contrib::serve::StaticFiles;
 use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
 use std::path::PathBuf;
@@ -56,7 +57,7 @@ fn convert_sound_files(files: Vec<PathBuf>) -> Vec<SoundFile> {
     for file in files {
         let name = file.file_name().unwrap().to_str().unwrap();
         let full_path = file.to_str().unwrap().to_string();
-        let path = format!("/_wav/{}", name);
+        let path = format!("/_static/{}", name);
 
         sound_files.push(SoundFile {
             name: name.to_string(),
@@ -77,8 +78,11 @@ fn index() -> Template {
 }
 
 fn main() {
+    let current_dir = env::current_dir().unwrap().to_str().unwrap().to_string();
+
     rocket::ignite()
         .mount("/", routes![index])
+        .mount("/_static", StaticFiles::from(current_dir))
         .attach(Template::fairing())
         .launch();
 }
