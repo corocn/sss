@@ -1,31 +1,84 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
 use rocket_contrib::templates::Template;
-use std::{env, fs};
+use std::path::PathBuf;
+use std::{env, fs, io};
+use serde::{Serialize, Serializer};
+use serde::ser::SerializeStruct;
 
 #[derive(serde::Serialize)]
-struct TemplateContext<'a> {
-    items: Vec<&'a str>,
+struct TemplateContext {
+    items: Vec<SoundFile>,
 }
 
-#[get("/")]
-fn index() -> Template {
+#[derive(Debug)]
+struct SoundFile {
+    name: String,
+    path: String,
+    full_path: String,
+}
+
+impl Serialize for SoundFile{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+    {
+        let mut s = serializer.serialize_struct("SoundFile", 3)?;
+        s.serialize_field("name", &self.name)?;
+        s.serialize_field("path", &self.path)?;
+        s.serialize_field("full_path", &self.full_path)?;
+        s.end()
+    }
+}
+
+fn get_files() -> io::Result<Vec<PathBuf>> {
     let mut path_buf = env::current_dir().unwrap();
     let dir = String::from("sample");
     path_buf.push(dir);
     let base_path = path_buf.to_str().unwrap();
 
-    // for entry in fs::read_dir(base_path) {
-    //     let path = entry.path();
-    //
-    //     dbg!(path.to_str().unwrap())
-    // }
+    let mut files: Vec<PathBuf> = vec![];
 
-    Template::render("index", &TemplateContext {
-        items: vec!["One", "Two", "Three"],
-    })
+    for entry in fs::read_dir(base_path)? {
+        let entry = entry?;
+        let path = entry.path();
+        files.push(path);
+    }
+
+    Ok(files)
+}
+
+fn convert_sound_files(files: Vec<PathBuf>) -> Vec<SoundFile> {
+    let mut sound_files = vec![];
+    for file in files {
+        let name = file.file_name().unwrap().to_str().unwrap();
+        let full_path = file.to_str().unwrap().to_string();
+        let path = String::from("test");
+
+        sound_files.push(SoundFile {
+            name: name.to_string(),
+            full_path,
+            path,
+        })
+    }
+
+    sound_files
+}
+
+#[get("/")]
+fn index() -> Template {
+    let files: Vec<PathBuf> = get_files().unwrap();
+    let files: Vec<SoundFile> = convert_sound_files(files);
+
+    Template::render(
+        "index",
+        &TemplateContext {
+            items: files,
+        },
+    )
 }
 
 fn main() {
