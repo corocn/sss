@@ -4,10 +4,10 @@
 extern crate rocket;
 
 use rocket_contrib::templates::Template;
+use serde::ser::SerializeStruct;
+use serde::{Serialize, Serializer};
 use std::path::PathBuf;
 use std::{env, fs, io};
-use serde::{Serialize, Serializer};
-use serde::ser::SerializeStruct;
 
 #[derive(serde::Serialize)]
 struct TemplateContext {
@@ -21,10 +21,10 @@ struct SoundFile {
     full_path: String,
 }
 
-impl Serialize for SoundFile{
+impl Serialize for SoundFile {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
         let mut s = serializer.serialize_struct("SoundFile", 3)?;
         s.serialize_field("name", &self.name)?;
@@ -73,12 +73,7 @@ fn index() -> Template {
     let files: Vec<PathBuf> = get_files().unwrap();
     let files: Vec<SoundFile> = convert_sound_files(files);
 
-    Template::render(
-        "index",
-        &TemplateContext {
-            items: files,
-        },
-    )
+    Template::render("index", &TemplateContext { items: files })
 }
 
 fn main() {
