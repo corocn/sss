@@ -3,8 +3,8 @@
 #[macro_use]
 extern crate rocket;
 
-use rocket_contrib::templates::Template;
 use rocket_contrib::serve::StaticFiles;
+use rocket_contrib::templates::Template;
 use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
 use std::path::PathBuf;
@@ -36,11 +36,7 @@ impl Serialize for SoundFile {
 }
 
 fn get_files() -> io::Result<Vec<PathBuf>> {
-    let mut path_buf = env::current_dir().unwrap();
-    let dir = String::from("sample");
-    path_buf.push(dir);
-    let base_path = path_buf.to_str().unwrap();
-
+    let base_path = env::current_dir().unwrap();
     let mut files: Vec<PathBuf> = vec![];
 
     for entry in fs::read_dir(base_path)? {
@@ -79,6 +75,7 @@ fn index() -> Template {
 
 fn main() {
     let current_dir = env::current_dir().unwrap().to_str().unwrap().to_string();
+    println!("current directory: {}", &current_dir);
 
     rocket::ignite()
         .mount("/", routes![index])
