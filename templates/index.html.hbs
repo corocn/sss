@@ -5,12 +5,19 @@
     <title>soundserver</title>
 </head>
 <body>
-    <section id="hello">
-        <ul>
+    <section id="playlist" class="c-list">
             {{#each items}}
-                <li>{{ this.name }}</li>
+            <div class="c-item">
+                <div class="c-item__name">
+                    <span>{{ this.name }}</span>
+                </div>
+                <div class="c-item__path">
+                    <audio controls>
+                        <source src="{{ this.path }}" type="audio/wav">
+                    </audio>
+                </div>
+            </div>
             {{/each}}
-        </ul>
     </section>
 </body>
 </html>

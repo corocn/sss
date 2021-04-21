@@ -56,7 +56,7 @@ fn convert_sound_files(files: Vec<PathBuf>) -> Vec<SoundFile> {
     for file in files {
         let name = file.file_name().unwrap().to_str().unwrap();
         let full_path = file.to_str().unwrap().to_string();
-        let path = String::from("test");
+        let path = format!("/_wav/{}", name);
 
         sound_files.push(SoundFile {
             name: name.to_string(),
