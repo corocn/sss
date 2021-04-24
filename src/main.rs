@@ -50,19 +50,21 @@ fn get_files() -> io::Result<Vec<PathBuf>> {
 
 fn convert_sound_files(files: Vec<PathBuf>) -> Vec<SoundFile> {
     let mut sound_files = vec![];
-    for file in files {
-        let name = file.file_name().unwrap().to_str().unwrap();
-        let full_path = file.to_str().unwrap().to_string();
-        let path = format!("/_static/{}", name);
-
-        sound_files.push(SoundFile {
-            name: name.to_string(),
-            full_path,
-            path,
-        })
+    for path in files {
+        if let Some(x) = path_buf_to_sound_file(&path) {
+            sound_files.push(x);
+        }
     }
 
     sound_files
+}
+
+fn path_buf_to_sound_file(path: &PathBuf) -> Option<SoundFile> {
+    let name = path.file_name()?.to_str()?.to_string();
+    let full_path = path.to_str()?.to_string();
+    let path = format!("/_static/{}", name);
+
+    Some(SoundFile { name, full_path, path })
 }
 
 #[get("/")]
