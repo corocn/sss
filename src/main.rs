@@ -3,6 +3,11 @@
 #[macro_use]
 extern crate rocket;
 
+use handlebars::Handlebars;
+
+#[macro_use]
+extern crate serde_json;
+
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 use serde::ser::SerializeStruct;
@@ -80,8 +85,12 @@ fn main() {
     println!("current directory: {}", &current_dir);
 
     rocket::ignite()
-        .mount("/", routes![index])
+        .mount("/", routes![index, index2])
         .mount("/_static", StaticFiles::from(current_dir))
-        .attach(Template::fairing())
+        // .attach(Template::fairing())
+        .attach(Template::custom(|engines| {
+            // let template = include_str!("../frontend/static/index.html");
+            engines.handlebars.register_template_string("index", "Hello {{name}}").unwrap();
+        }))
         .launch();
 }
