@@ -1,5 +1,5 @@
 [package]
-name = "soundserver"
+name = "sss"
 version = "0.1.0"
 authors = ["corocn <crsk.plmzh@gmail.com>"]
 edition = "2018"
