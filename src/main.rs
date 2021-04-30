@@ -85,12 +85,12 @@ fn main() {
     println!("current directory: {}", &current_dir);
 
     rocket::ignite()
-        .mount("/", routes![index, index2])
+        .mount("/", routes![index])
         .mount("/_static", StaticFiles::from(current_dir))
         // .attach(Template::fairing())
         .attach(Template::custom(|engines| {
-            // let template = include_str!("../frontend/static/index.html");
-            engines.handlebars.register_template_string("index", "Hello {{name}}").unwrap();
+            let template_str = include_str!("../templates/index.html.hbs");
+            engines.handlebars.register_template_string("index", template_str).unwrap();
         }))
         .launch();
 }
