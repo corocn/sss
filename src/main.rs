@@ -15,6 +15,9 @@ use serde::{Serialize, Serializer};
 use std::path::PathBuf;
 use std::{env, fs, io};
 use rocket::config::{ Config, Environment};
+use rocket::response::content;
+
+const template_str: &str = include_str!("../templates/index.html.hbs");
 
 #[derive(serde::Serialize)]
 struct TemplateContext {
@@ -74,11 +77,14 @@ fn path_buf_to_sound_file(path: &PathBuf) -> Option<SoundFile> {
 }
 
 #[get("/")]
-fn index() -> Template {
+fn index() -> content::Html<String> {
     let files: Vec<PathBuf> = get_files().unwrap();
     let files: Vec<SoundFile> = convert_sound_files(files);
 
-    Template::render("index", &TemplateContext { items: files })
+
+    let mut reg = Handlebars::new();
+    let rendered = reg.render_template(template_str, &TemplateContext { items: files }).unwrap();
+    content::Html(rendered)
 }
 
 fn main() {
@@ -90,13 +96,8 @@ fn main() {
         .port(8000)
         .finalize().unwrap();
 
-    rocket::ignite()
+    rocket::custom(config)
         .mount("/", routes![index])
         .mount("/_static", StaticFiles::from(current_dir))
-        // .attach(Template::fairing())
-        .attach(Template::custom(|engines| {
-            let template_str = include_str!("../templates/index.html.hbs");
-            engines.handlebars.register_template_string("index", template_str).unwrap();
-        }))
         .launch();
 }
