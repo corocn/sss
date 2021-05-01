@@ -87,6 +87,12 @@ fn index() -> content::Html<String> {
     content::Html(rendered)
 }
 
+// TODO: 対象ディレクトリの指定
+// TODO: ファイルの制限
+// TODO: 絞り込み
+// TODO: bind address
+// TODO: port
+
 fn main() {
     let current_dir = env::current_dir().unwrap().to_str().unwrap().to_string();
     println!("current directory: {}", &current_dir);
