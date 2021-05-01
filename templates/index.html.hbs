@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span>{{ this.name }}</span>
                 </div>
                 <div class="c-item__path">
-                    <audio controls>
+                    <audio controls preload="none">
                         <source src="{{ this.path }}" type="audio/wav">
                     </audio>
                 </div>
