@@ -14,6 +14,7 @@ use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
 use std::path::PathBuf;
 use std::{env, fs, io};
+use rocket::config::{ Config, Environment};
 
 #[derive(serde::Serialize)]
 struct TemplateContext {
@@ -83,6 +84,11 @@ fn index() -> Template {
 fn main() {
     let current_dir = env::current_dir().unwrap().to_str().unwrap().to_string();
     println!("current directory: {}", &current_dir);
+
+    let config = Config::build(Environment::Production)
+        .address("localhost")
+        .port(8000)
+        .finalize().unwrap();
 
     rocket::ignite()
         .mount("/", routes![index])

@@ -1,5 +1,5 @@
-[development]
-address = "localhost"
-
-[production]
-address = "localhost"
+#[development]
+#address = "localhost"
+#
+#[production]
+#address = "0.0.0.0"
