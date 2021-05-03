@@ -85,8 +85,6 @@ fn path_buf_to_sound_file(path: &PathBuf) -> Option<SoundFile> {
 
 #[get("/")]
 fn index(state: State<MyConfig>) -> content::Html<String> {
-    println!("{:?} is mapped.", &state.full_path);
-
     let files: Vec<PathBuf> = get_files(&state.full_path).unwrap();
     let files: Vec<SoundFile> = convert_sound_files(files);
 
@@ -97,7 +95,6 @@ fn index(state: State<MyConfig>) -> content::Html<String> {
     content::Html(rendered)
 }
 
-// TODO: 対象ディレクトリの指定
 // TODO: ファイルの制限
 // TODO: 絞り込み
 
@@ -123,6 +120,8 @@ fn main() -> std::io::Result<()> {
     let config = MyConfig {
         full_path: full_path.to_owned()
     };
+
+    println!("{:?} is mapped.", &state.full_path);
 
     let rocket_config = Config::build(Environment::Production)
         .address(opt.bind_address)
