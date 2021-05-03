@@ -2,6 +2,10 @@
 
 This is a static web server that specializes in checking a lot of audio files.
 
+## Screenshot
+
+![ss1](./image/screenshot1.png)
+
 ## Usage
 
 ```
