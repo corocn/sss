@@ -95,8 +95,6 @@ fn index() -> content::Html<String> {
 // TODO: 対象ディレクトリの指定
 // TODO: ファイルの制限
 // TODO: 絞り込み
-// TODO: bind address
-// TODO: port
 
 use structopt::StructOpt;
 
