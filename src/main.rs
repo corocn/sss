@@ -81,7 +81,6 @@ fn index() -> content::Html<String> {
     let files: Vec<PathBuf> = get_files().unwrap();
     let files: Vec<SoundFile> = convert_sound_files(files);
 
-
     let mut reg = Handlebars::new();
     let rendered = reg.render_template(template_str, &TemplateContext { items: files }).unwrap();
     content::Html(rendered)
@@ -93,13 +92,28 @@ fn index() -> content::Html<String> {
 // TODO: bind address
 // TODO: port
 
+use structopt::StructOpt;
+
+#[derive(StructOpt, Debug)]
+#[structopt(name = "sss", author = "Takahiro Tsuchiya @corocn")]
+struct Opt {
+    #[structopt(short, long, default_value = "localhost")]
+    bind_address: String,
+
+    #[structopt(short, long, default_value = "8000")]
+    port: u16,
+}
+
 fn main() {
+    let opt = Opt::from_args();
+    dbg!(&opt);
+
     let current_dir = env::current_dir().unwrap().to_str().unwrap().to_string();
     println!("current directory: {}", &current_dir);
 
     let config = Config::build(Environment::Production)
-        .address("localhost")
-        .port(8000)
+        .address(opt.bind_address)
+        .port(opt.port)
         .finalize().unwrap();
 
     rocket::custom(config)
