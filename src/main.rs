@@ -5,20 +5,20 @@ extern crate rocket;
 
 use handlebars::Handlebars;
 
-#[macro_use]
-extern crate serde_json;
+// #[macro_use]
+// extern crate serde_json;
 
 use rocket::config::{Config, Environment};
 use rocket::response::content;
 use rocket_contrib::serve::StaticFiles;
-use rocket_contrib::templates::Template;
+// use rocket_contrib::templates::Template;
 use rocket::State;
 use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
 use std::path::{PathBuf, Path};
-use std::{env, fs, io};
+use std::{fs, io};
 
-const template_str: &str = include_str!("../templates/index.html.hbs");
+const TEMPLATE_STR: &str = include_str!("../templates/index.html.hbs");
 
 #[derive(serde::Serialize)]
 struct TemplateContext {
@@ -88,9 +88,9 @@ fn index(state: State<MyConfig>) -> content::Html<String> {
     let files: Vec<PathBuf> = get_files(&state.full_path).unwrap();
     let files: Vec<SoundFile> = convert_sound_files(files);
 
-    let mut reg = Handlebars::new();
+    let reg = Handlebars::new();
     let rendered = reg
-        .render_template(template_str, &TemplateContext { items: files })
+        .render_template(TEMPLATE_STR, &TemplateContext { items: files })
         .unwrap();
     content::Html(rendered)
 }
@@ -121,7 +121,7 @@ fn main() -> std::io::Result<()> {
         full_path: full_path.to_owned()
     };
 
-    println!("{:?} is mapped.", &state.full_path);
+    println!("{:?} is mapped.", &config.full_path);
 
     let rocket_config = Config::build(Environment::Production)
         .address(opt.bind_address)

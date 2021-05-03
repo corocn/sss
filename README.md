@@ -1,9 +1,24 @@
 # sss
 
+This is a static web server that specializes in checking a lot of audio files.
+
 ## Usage
 
 ```
-sss sample
+USAGE:
+    sss [OPTIONS] [TARGET_DIR]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -b, --bind-address <bind-address>     [default: localhost]
+    -p, --port <port>                     [default: 8000]
+```
+
+```
+sss ./sample
 ```
 
 ```
