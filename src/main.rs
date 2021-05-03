@@ -8,14 +8,14 @@ use handlebars::Handlebars;
 #[macro_use]
 extern crate serde_json;
 
+use rocket::config::{Config, Environment};
+use rocket::response::content;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
 use std::path::PathBuf;
 use std::{env, fs, io};
-use rocket::config::{ Config, Environment};
-use rocket::response::content;
 
 const template_str: &str = include_str!("../templates/index.html.hbs");
 
@@ -73,7 +73,11 @@ fn path_buf_to_sound_file(path: &PathBuf) -> Option<SoundFile> {
     let full_path = path.to_str()?.to_string();
     let path = format!("/_static/{}", name);
 
-    Some(SoundFile { name, full_path, path })
+    Some(SoundFile {
+        name,
+        full_path,
+        path,
+    })
 }
 
 #[get("/")]
@@ -82,7 +86,9 @@ fn index() -> content::Html<String> {
     let files: Vec<SoundFile> = convert_sound_files(files);
 
     let mut reg = Handlebars::new();
-    let rendered = reg.render_template(template_str, &TemplateContext { items: files }).unwrap();
+    let rendered = reg
+        .render_template(template_str, &TemplateContext { items: files })
+        .unwrap();
     content::Html(rendered)
 }
 
@@ -114,7 +120,8 @@ fn main() {
     let config = Config::build(Environment::Production)
         .address(opt.bind_address)
         .port(opt.port)
-        .finalize().unwrap();
+        .finalize()
+        .unwrap();
 
     rocket::custom(config)
         .mount("/", routes![index])
