@@ -1,6 +1,7 @@
 # sss
 
-This is a static web server that specializes in checking a lot of audio files.
+This is a static web server that specializes in checking a lot of audio files that are placed on remote server.
+It's designed to be used with SSH tunneling.
 
 ## Screenshot
 
