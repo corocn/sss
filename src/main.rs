@@ -12,9 +12,10 @@ use rocket::config::{Config, Environment};
 use rocket::response::content;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
+use rocket::State;
 use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 use std::{env, fs, io};
 
 const template_str: &str = include_str!("../templates/index.html.hbs");
@@ -31,6 +32,10 @@ struct SoundFile {
     full_path: String,
 }
 
+struct MyConfig {
+    full_path: PathBuf
+}
+
 impl Serialize for SoundFile {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -44,10 +49,8 @@ impl Serialize for SoundFile {
     }
 }
 
-fn get_files() -> io::Result<Vec<PathBuf>> {
-    let base_path = env::current_dir().unwrap();
+fn get_files(base_path: &PathBuf) -> io::Result<Vec<PathBuf>> {
     let mut files: Vec<PathBuf> = vec![];
-
     for entry in fs::read_dir(base_path)? {
         let entry = entry?;
         let path = entry.path();
@@ -81,8 +84,10 @@ fn path_buf_to_sound_file(path: &PathBuf) -> Option<SoundFile> {
 }
 
 #[get("/")]
-fn index() -> content::Html<String> {
-    let files: Vec<PathBuf> = get_files().unwrap();
+fn index(state: State<MyConfig>) -> content::Html<String> {
+    println!("{:?} is mapped.", &state.full_path);
+
+    let files: Vec<PathBuf> = get_files(&state.full_path).unwrap();
     let files: Vec<SoundFile> = convert_sound_files(files);
 
     let mut reg = Handlebars::new();
@@ -106,23 +111,30 @@ struct Opt {
 
     #[structopt(short, long, default_value = "8000")]
     port: u16,
+
+    #[structopt(name = "TARGET_DIR", default_value = ".")]
+    dir: String,
 }
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let opt = Opt::from_args();
-    dbg!(&opt);
 
-    let current_dir = env::current_dir().unwrap().to_str().unwrap().to_string();
-    println!("current directory: {}", &current_dir);
+    let full_path = fs::canonicalize(Path::new(&opt.dir))?;
+    let config = MyConfig {
+        full_path: full_path.to_owned()
+    };
 
-    let config = Config::build(Environment::Production)
+    let rocket_config = Config::build(Environment::Production)
         .address(opt.bind_address)
         .port(opt.port)
         .finalize()
         .unwrap();
 
-    rocket::custom(config)
+    rocket::custom(rocket_config)
         .mount("/", routes![index])
-        .mount("/_static", StaticFiles::from(current_dir))
+        .mount("/_static", StaticFiles::from(&config.full_path))
+        .manage(config)
         .launch();
+
+    Ok(())
 }
