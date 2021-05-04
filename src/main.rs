@@ -109,6 +109,7 @@ fn index(state: State<MyConfig>) -> content::Html<String> {
 
 // TODO: ファイルの制限
 // TODO: 複数階層をいいかんじに処理するなにか
+// TODO: 拡張子複数
 
 use structopt::StructOpt;
 use walkdir::{WalkDir, DirEntry};
@@ -123,7 +124,7 @@ struct Opt {
     #[structopt(short, long, default_value = "8000")]
     port: u16,
 
-    #[structopt(short, long, default_value = "")]
+    #[structopt(short, long, default_value = "wav")]
     ext: String,
 
     #[structopt(name = "TARGET_DIR", default_value = ".")]
