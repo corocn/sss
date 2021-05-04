@@ -109,6 +109,9 @@ struct Opt {
     #[structopt(short, long, default_value = "8000")]
     port: u16,
 
+    #[structopt(short, long, default_value = "*")]
+    ext: String,
+
     #[structopt(name = "TARGET_DIR", default_value = ".")]
     dir: String,
 }
