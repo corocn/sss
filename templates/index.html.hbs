@@ -2,43 +2,10 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Test</title>
 </head>
-<style>
-    .c-item + .c-item {
-        margin-top: 16px;
-    }
-</style>
-<script type="text/javascript">
-document.addEventListener("DOMContentLoaded", () => {
-    const audios = document.querySelectorAll('audio')
-    for (let i = 0; i < audios.length; i++) {
-        const audio = audios[i]
-
-        audio.addEventListener('ended', () => {
-            const next = audios[i+1];
-            if (next) {
-                next.play();
-            }
-        });
-    }
-});
-</script>
 <body>
-    <section id="playlist" class="c-list">
-            {{#each items}}
-            <div class="c-item">
-                <div class="c-item__name">
-                    <span>{{ this.name }}</span>
-                </div>
-                <div class="c-item__path">
-                    <audio controls preload="none">
-                        <source src="{{ this.path }}" type="audio/wav">
-                    </audio>
-                </div>
-            </div>
-            {{/each}}
-    </section>
+Hello, {{name}}
 </body>
 </html>
 
