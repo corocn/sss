@@ -55,16 +55,12 @@ fn get_files(base_path: &PathBuf) -> io::Result<Vec<PathBuf>> {
     for entry in WalkDir::new(base_path) {
         let entry = entry?;
         let path = entry.path();
-        if is_file(&entry) {
+        if entry.file_type().is_file() {
             files.push(path.to_path_buf());
         }
     }
 
     Ok(files)
-}
-
-fn is_file(entry: &DirEntry) -> bool {
-    entry.file_type().is_file()
 }
 
 fn convert_sound_files(files: Vec<PathBuf>) -> Vec<SoundFile> {
