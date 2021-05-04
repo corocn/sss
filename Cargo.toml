@@ -12,6 +12,7 @@ serde = { version = "^1.0.101", features = ["derive"] }
 handlebars = "3.5.4"
 serde_json = "1.0.64"
 structopt = "0.3.21"
+walkdir = "2.3.2"
 
 [dependencies.rocket_contrib]
 version = "0.4.7"

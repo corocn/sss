@@ -52,13 +52,19 @@ impl Serialize for SoundFile {
 
 fn get_files(base_path: &PathBuf) -> io::Result<Vec<PathBuf>> {
     let mut files: Vec<PathBuf> = vec![];
-    for entry in fs::read_dir(base_path)? {
+    for entry in WalkDir::new(base_path) {
         let entry = entry?;
         let path = entry.path();
-        files.push(path);
+        if is_file(&entry) {
+            files.push(path.to_path_buf());
+        }
     }
 
     Ok(files)
+}
+
+fn is_file(entry: &DirEntry) -> bool {
+    entry.file_type().is_file()
 }
 
 fn convert_sound_files(files: Vec<PathBuf>) -> Vec<SoundFile> {
@@ -100,6 +106,8 @@ fn index(state: State<MyConfig>) -> content::Html<String> {
 // TODO: 絞り込み
 
 use structopt::StructOpt;
+use walkdir::{WalkDir, DirEntry};
+use std::error::Error;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "sss", author = "Takahiro Tsuchiya @corocn")]
