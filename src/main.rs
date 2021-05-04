@@ -50,13 +50,22 @@ impl Serialize for SoundFile {
     }
 }
 
-fn get_files(base_path: &PathBuf) -> io::Result<Vec<PathBuf>> {
+fn get_files(full_path: &Path, filter_ext: &str) -> io::Result<Vec<PathBuf>> {
     let mut files: Vec<PathBuf> = vec![];
-    for entry in WalkDir::new(base_path) {
+    for entry in WalkDir::new(full_path) {
         let entry = entry?;
         let path = entry.path();
+        let path_buf = path.to_path_buf();
         if entry.file_type().is_file() {
-            files.push(path.to_path_buf());
+            if filter_ext != "" {
+                if let Some(e) = path_buf.extension() {
+                    if e == filter_ext {
+                        files.push(path_buf);
+                    }
+                }
+            } else {
+                files.push(path_buf);
+            }
         }
     }
 
@@ -88,7 +97,7 @@ fn path_buf_to_sound_file(path: &PathBuf) -> Option<SoundFile> {
 
 #[get("/")]
 fn index(state: State<MyConfig>) -> content::Html<String> {
-    let files: Vec<PathBuf> = get_files(&state.full_path).unwrap();
+    let files: Vec<PathBuf> = get_files(&state.full_path, &state.ext).unwrap();
     let files: Vec<SoundFile> = convert_sound_files(files);
 
     let reg = Handlebars::new();
