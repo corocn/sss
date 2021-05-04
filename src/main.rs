@@ -100,6 +100,7 @@ fn index(state: State<MyConfig>) -> content::Html<String> {
 
 // TODO: ファイルの制限
 // TODO: 絞り込み
+// TODO: 複数階層をいいかんじに処理するなにか
 
 use structopt::StructOpt;
 use walkdir::{WalkDir, DirEntry};
