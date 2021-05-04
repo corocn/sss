@@ -33,7 +33,8 @@ struct SoundFile {
 }
 
 struct MyConfig {
-    full_path: PathBuf
+    full_path: PathBuf,
+    ext: String,
 }
 
 impl Serialize for SoundFile {
@@ -109,7 +110,7 @@ struct Opt {
     #[structopt(short, long, default_value = "8000")]
     port: u16,
 
-    #[structopt(short, long, default_value = "*")]
+    #[structopt(short, long, default_value = "")]
     ext: String,
 
     #[structopt(name = "TARGET_DIR", default_value = ".")]
@@ -117,11 +118,12 @@ struct Opt {
 }
 
 fn main() -> std::io::Result<()> {
-    let opt = Opt::from_args();
+    let opt: Opt = Opt::from_args();
 
     let full_path = fs::canonicalize(Path::new(&opt.dir))?;
     let config = MyConfig {
-        full_path: full_path.to_owned()
+        full_path: full_path.to_owned(),
+        ext: (&opt.ext).to_string()
     };
 
     println!("{:?} is mapped.", &config.full_path);
