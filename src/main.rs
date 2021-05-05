@@ -52,7 +52,7 @@ impl Serialize for SoundFile {
 
 fn get_files(full_path: &Path, filter_ext: &str) -> io::Result<Vec<PathBuf>> {
     let mut files: Vec<PathBuf> = vec![];
-    let mut walk = WalkDir::new(full_path).max_depth(1);
+    let walk = WalkDir::new(full_path).max_depth(1);
     for entry in walk {
         let entry = entry?;
         let path = entry.path();
@@ -112,8 +112,8 @@ fn index(state: State<MyConfig>) -> content::Html<String> {
 // TODO: 拡張子複数
 
 use structopt::StructOpt;
-use walkdir::{WalkDir, DirEntry};
-use std::error::Error;
+use walkdir::{WalkDir};
+
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "sss", author = "Takahiro Tsuchiya @corocn")]
