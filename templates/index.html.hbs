@@ -5,6 +5,15 @@
     <title>sss</title>
 </head>
 <style>
+    .c-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .c-item__name {
+        margin-left: 16px;
+    }
+
     .c-item + .c-item {
         margin-top: 16px;
     }
@@ -28,13 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
     <section id="playlist" class="c-list">
             {{#each items}}
             <div class="c-item">
-                <div class="c-item__name">
-                    <span>{{ this.name }}</span>
-                </div>
                 <div class="c-item__path">
                     <audio controls preload="none">
                         <source src="{{ this.path }}" type="audio/wav">
                     </audio>
+                </div>
+                <div class="c-item__name">
+                    <span>{{ this.name }}</span>
                 </div>
             </div>
             {{/each}}
