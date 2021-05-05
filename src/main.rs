@@ -109,7 +109,6 @@ fn index(state: State<MyConfig>) -> content::Html<String> {
 }
 
 // TODO: ファイルの制限
-// TODO: 複数階層をいいかんじに処理するなにか
 // TODO: 拡張子複数
 
 use structopt::StructOpt;
