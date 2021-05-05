@@ -52,7 +52,8 @@ impl Serialize for SoundFile {
 
 fn get_files(full_path: &Path, filter_ext: &str) -> io::Result<Vec<PathBuf>> {
     let mut files: Vec<PathBuf> = vec![];
-    for entry in WalkDir::new(full_path) {
+    let mut walk = WalkDir::new(full_path).max_depth(1);
+    for entry in walk {
         let entry = entry?;
         let path = entry.path();
         let path_buf = path.to_path_buf();
